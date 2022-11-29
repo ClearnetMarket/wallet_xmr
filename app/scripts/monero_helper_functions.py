@@ -1,7 +1,7 @@
 
 def get_amount(amount):
     """
-    decode cryptonote amount format to user friendly format.
+    decode cryptonote amount format to friendly format.
 
     """
 
@@ -30,7 +30,7 @@ def get_amount(amount):
 
 def get_money(amount):
     """
-    decode cryptonote amount format to user friendly format.
+    decode cryptonote amount format to a more friendly format.
 
     """
 

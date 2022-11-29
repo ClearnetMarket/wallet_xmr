@@ -10,14 +10,21 @@ from monero_addtotransactions import xmr_add_transaction
 from app.generalfunctions import floating_decimals
 from monero_helper_functions import get_money
 
-from app.classes.wallet_xmr import Xmr_Wallet, Xmr_BlockHeight, Xmr_Transactions, Xmr_Unconfirmed, Xmr_TransOrphan
+from app.classes.wallet_xmr import\
+    Xmr_Wallet,\
+    Xmr_BlockHeight,\
+    Xmr_Transactions, \
+    Xmr_Unconfirmed,\
+    Xmr_TransOrphan
 
 # standard json header
 headers = {'content-type': 'application/json'}
 
 
 def update_block_height(newheight):
-    current_blockheight = db.session.query(Xmr_BlockHeight).get(1)
+    current_blockheight = db.session\
+        .query(Xmr_BlockHeight)\
+        .get(1)
     current_blockheight.blockheight = newheight
     db.session.add(current_blockheight)
 
@@ -28,7 +35,8 @@ def get_unconfirmed_db(user_id):
     :param user_id:
     :return:
     """
-    unconfirmedtable = db.session.query(Xmr_Unconfirmed)\
+    unconfirmedtable = db.session\
+        .query(Xmr_Unconfirmed)\
         .filter_by(user_id=user_id)\
         .first()
     return unconfirmedtable
@@ -137,8 +145,10 @@ def getbalanceunconfirmed(user_id):
 
     total = a + b + c + d + e
 
-    get_user_wallet = db.session.query(Xmr_Wallet)\
-        .filter_by(user_id=user_id).first()
+    get_user_wallet = db.session\
+        .query(Xmr_Wallet)\
+        .filter_by(user_id=user_id)\
+        .first()
     totalchopped = floating_decimals(total, 12)
     get_user_wallet.unconfirmed = totalchopped
 
@@ -153,8 +163,10 @@ def createorphan(hashid, amount):
     :param amount:
     :return:
     """
-    checkorphan = db.session.query(Xmr_Unconfirmed)\
-        .filter_by(txid1=hashid).first()
+    checkorphan = db.session\
+        .query(Xmr_Unconfirmed)\
+        .filter_by(txid1=hashid)\
+        .first()
     if checkorphan is None:
         # orphan transaction..put in background.
         trans = Xmr_TransOrphan(
@@ -182,10 +194,14 @@ def addtransaction(user_id,
 
     # check to see how many confirmations
 
-    current_blockheight = db.session.query(Xmr_BlockHeight).get(1)
+    current_blockheight = db.session\
+        .query(Xmr_BlockHeight)\
+        .get(1)
+        
     current_block = current_blockheight.blockheight
 
-    getuserswallet = db.session.query(Xmr_Wallet)\
+    getuserswallet = db.session\
+        .query(Xmr_Wallet)\
         .filter(Xmr_Wallet.user_id == user_id)\
         .first()
 
@@ -233,7 +249,7 @@ def createnewtransaction(user_id,
                          new_transaction_blockheight,
                          old_blockheight):
     """
-    Found new transaction..creates it in db
+    Found new transaction .creates it in db
     :param user_id:
     :param amount:
     :param hashid:
@@ -242,7 +258,8 @@ def createnewtransaction(user_id,
     :return:
     """
     print("Found new transaction:", str(hashid))
-    getuserswallet = db.session.query(Xmr_Wallet)\
+    getuserswallet = db.session\
+        .query(Xmr_Wallet)\
         .filter(Xmr_Wallet.user_id == user_id)\
         .first()
 
@@ -303,7 +320,9 @@ def find_new_deposits(blockbacklog):
     :return:
     """
 
-    current_blockheight_query = db.session.query(Xmr_BlockHeight).get(1)
+    current_blockheight_query = db.session\
+        .query(Xmr_BlockHeight)\
+        .get(1)
     current_block = current_blockheight_query.blockheight
 
     blocksfromcurrent = current_block - blockbacklog
@@ -322,7 +341,8 @@ def find_new_deposits(blockbacklog):
             amount = Decimal(get_money(str(incpayments['amount'])))
 
             # get user with that payment id
-            getuserswallet = db.session.query(Xmr_Wallet).\
+            getuserswallet = db.session\
+                .query(Xmr_Wallet).\
                 filter(Xmr_Wallet.address1 == incomming_address)\
                 .first()
 
@@ -333,7 +353,8 @@ def find_new_deposits(blockbacklog):
                 user_id = getuserswallet.user_id
                 print("USER:", getuserswallet.user_id)
                 # see if already in db
-                gettransaction = db.session.query(Xmr_Transactions)\
+                gettransaction = db.session\
+                    .query(Xmr_Transactions)\
                     .filter_by(txid=hashid)\
                     .first()
 

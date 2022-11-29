@@ -40,10 +40,11 @@ def xmr_add_transaction(category,
         block=int(block),
         created=now,
         address=address,
+        note=None,
         fee=fee,
-        orderid=0,
-        senderid=0,
+        item_uuid=None,
         digital_currency=3,
+        order_uuid=None
 
 
     )

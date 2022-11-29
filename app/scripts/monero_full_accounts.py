@@ -7,6 +7,8 @@ from app import db
 
 from app.classes.auth import Auth_User
 from app.classes.wallet_xmr import Xmr_Wallet, Xmr_Unconfirmed
+
+
 # standard json header
 headers = {'content-type': 'application/json'}
 
@@ -93,9 +95,12 @@ def balance_validate_address(theaddress):
     return response.json()
 
 
-def checkforwork():
+def main():
     # get all users
-    the_users = db.session.query(Auth_User).order_by(Auth_User.id.asc()).all()
+    the_users = db.session\
+        .query(Auth_User)\
+        .order_by(Auth_User.id.asc())\
+        .all()
     # loop through them
     print("Starting program ..")
     for f in the_users:
@@ -103,7 +108,8 @@ def checkforwork():
         print("***********Start*********")
 
         # Get users wallet in database
-        user_wallet = db.session.query(Xmr_Wallet) \
+        user_wallet = db.session\
+            .query(Xmr_Wallet) \
             .filter(Xmr_Wallet.user_id == f.id) \
             .first()
 
@@ -113,7 +119,8 @@ def checkforwork():
             createnewdbentry(userid=f.id)
 
             # re query wallet
-            user_wallet = db.session.query(Xmr_Wallet) \
+            user_wallet = db.session\
+                .query(Xmr_Wallet) \
                 .filter(Xmr_Wallet.user_id == f.id) \
                 .first()
 
@@ -142,7 +149,7 @@ def checkforwork():
                 else:
                     print("Adding new address for user")
                     print(f.user_name)
-                    # create an subaddress
+                    # create a subaddress
                     userinfo = create_subaddress(user_id=f.id)
                     # get the response string
                     useraddress = userinfo["result"]["address"]
@@ -163,4 +170,4 @@ def checkforwork():
 
 
 if __name__ == '__main__':
-    checkforwork()
+    main()

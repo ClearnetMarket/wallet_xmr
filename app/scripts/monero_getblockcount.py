@@ -29,20 +29,21 @@ def getblockheight():
         data=json.dumps(rpc_input),
         headers=headers,
         auth=HTTPDigestAuth(rpcusername, rpcpassword))
-    print(response)
     response_json = response.json()
     print(response_json)
     return response_json
 
 
-def updateblockheight():
+def main():
     response_json = getblockheight()
 
     if response_json["result"]['height'] > 1:
 
         lastheight = response_json["result"]['height']
 
-        lastblockheight = db.session.query(Xmr_BlockHeight).get(1)
+        lastblockheight = db.session\
+            .query(Xmr_BlockHeight)\
+            .get(1)
         lastblockheight.blockheight = int(lastheight)
 
         db.session.add(lastblockheight)
@@ -51,4 +52,4 @@ def updateblockheight():
 
 
 if __name__ == '__main__':
-    updateblockheight()
+    main()

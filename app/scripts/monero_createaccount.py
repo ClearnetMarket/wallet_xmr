@@ -41,20 +41,24 @@ def create_subaddress(user_id):
     return response.json()
 
 
-def checkforwork():
+def main():
     # query for work ..#2 = create a wallet
-    work = db.session.query(Xmr_WalletWork) \
+    work = db.session\
+        .query(Xmr_WalletWork) \
         .filter(Xmr_WalletWork.type == 2) \
         .all()
     if work:
         for f in work:
             # get user wallet
-            user_wallet = db.session.query(Xmr_Wallet) \
+            user_wallet = db.session\
+                .query(Xmr_Wallet) \
                 .filter(Xmr_Wallet.user_id == f.user_id) \
                 .first()
 
             # get the user
-            theuser = db.session.query(Auth_User).get(f.user_id)
+            theuser = db.session\
+                .query(Auth_User)\
+                .get(f.user_id)
             # create an account
             userinfo = create_subaddress(user_id=f.id)
             # get new address
@@ -78,4 +82,4 @@ def checkforwork():
 
 
 if __name__ == '__main__':
-    checkforwork()
+    main()

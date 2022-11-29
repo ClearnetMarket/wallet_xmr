@@ -17,6 +17,7 @@ def getbalance(account_index):
         "params": {"account_index ": int(account_index)}
     }
 
+    
     # add standard rpc values
     rpc_input.update({"jsonrpc": "2.0", "id": "0"})
 
@@ -26,7 +27,6 @@ def getbalance(account_index):
         data=json.dumps(rpc_input),
         headers=headers,
         auth=HTTPDigestAuth(rpcusername, rpcpassword))
-    print("BALANCE")
     print(json.dumps(response.json(), indent=4))
     return response.json()
 
@@ -61,6 +61,7 @@ def getaddresses():
     rpc_input.update({"jsonrpc": "2.0", "id": "0"})
 
     # execute the rpc request
+
     response = requests.post(
         url,
         data=json.dumps(rpc_input),

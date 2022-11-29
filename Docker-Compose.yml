@@ -1,0 +1,26 @@
+version: '3.8'
+
+volumes:
+  freeport_xmr_wallet_volume:
+  freeport_xmr_volume:
+  db:
+    driver: local
+
+networks:
+  freeport:
+    external: true
+
+  api:
+    container_name: freeport-xmr
+    image: freeport/freeport-xmr
+    restart: on-failure
+    build:
+        context: ./
+        dockerfile: Dockerfile
+    volumes:
+        - ./:/app
+        - freeport_wallet_xmr:/home/droid/freeport/data
+    ports:
+      - '6010:6010'
+    networks:
+      - freeport
