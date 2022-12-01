@@ -65,7 +65,7 @@ db.sqlite3
 db.sqlite3-journal
 
 # Flask stuff:
-instance/
+
 .webassets-cache
 
 # Scrapy stuff:
@@ -132,8 +132,9 @@ dmypy.json
 .pyre/
 
 /passwords.py
-/walletconfig.py
 /config.py
-/crons.txt
 /backupwallet.py
 /rsync.txt
+instance/config.py
+instance/walletconfig.py
+instance/crons.txt
