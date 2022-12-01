@@ -6,9 +6,9 @@ from decimal import Decimal
 from walletconfig import rpcpassword, rpcusername, url
 from app import db
 
-from monero_addtotransactions import xmr_add_transaction
+from app.scripts.monero_addtotransactions import xmr_add_transaction
 from app.generalfunctions import floating_decimals
-from monero_helper_functions import get_money
+from app.scripts.monero_helper_functions import get_money
 
 from app.classes.wallet_xmr import\
     Xmr_Wallet,\

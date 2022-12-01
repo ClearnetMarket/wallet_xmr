@@ -1,5 +1,5 @@
 from flask import jsonify
-from scripts import\
+from app.scripts import\
 monero_checkincomming,\
 monero_createaccount,\
 monero_deletewalletwork,\
@@ -24,7 +24,7 @@ def get_wallet_status():
     })
 
 @app.route('/deletework', methods=['GET'])
-def get_block_count():
+def delete_work():
     """
     Gets the count of how many blocks
     :return:

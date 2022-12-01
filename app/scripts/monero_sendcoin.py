@@ -4,9 +4,9 @@ from requests.auth import HTTPDigestAuth
 import json
 from walletconfig import rpcpassword, rpcusername, url
 from app import db
-from monero_addtotransactions import \
+from app.scripts.monero_addtotransactions import \
     xmr_add_transaction
-from monero_helper_functions import \
+from app.scripts.monero_helper_functions import \
     get_money, \
     get_amount
 from app.classes.wallet_xmr import\
