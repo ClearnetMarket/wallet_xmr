@@ -381,5 +381,3 @@ def find_new_deposits(blockbacklog):
         db.session.commit()
 
 
-if __name__ == '__main__':
-    find_new_deposits(blockbacklog=100)

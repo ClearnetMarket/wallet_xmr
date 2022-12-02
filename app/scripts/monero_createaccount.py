@@ -82,5 +82,3 @@ def main():
         print("no new accounts :(")
 
 
-if __name__ == '__main__':
-    main()

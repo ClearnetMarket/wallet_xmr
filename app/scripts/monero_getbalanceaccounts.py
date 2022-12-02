@@ -71,7 +71,3 @@ def getaddresses():
     print(json.dumps(response.json(), indent=4))
 
 
-if __name__ == '__main__':
-    #getaddresses()
-    getbalance(2)
-    gettheaccounts()

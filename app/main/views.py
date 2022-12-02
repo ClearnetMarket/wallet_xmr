@@ -15,7 +15,7 @@ from app import app
 @app.route('/', methods=['GET'])
 def get_wallet_status():
     """
-    Gets the count of vendor order issues.  Notification bar at top
+    Check is wallet is online
     :return:
     """
 
@@ -26,10 +26,10 @@ def get_wallet_status():
 @app.route('/deletework', methods=['GET'])
 def delete_work():
     """
-    Gets the count of how many blocks
+    Deletes old database entries
     :return:
     """
-    monero_deletewalletwork()
+    monero_deletewalletwork.deleteoldorder()
 
     return jsonify({
         "wallet_status": 'Deleted Work',
@@ -39,10 +39,13 @@ def delete_work():
 @app.route('/getbalanceaccounts', methods=['GET'])
 def get_balance_accounts():
     """
-    Gets the count of how many blocks
+    Gets the balance of account 2
+    Lists the accounts
     :return:
     """
-    monero_getbalanceaccounts()
+    #monero_getbalanceaccounts.getaddresses()
+    monero_getbalanceaccounts.getbalance(2)
+    monero_getbalanceaccounts.gettheaccounts()
 
     return jsonify({
         "wallet_status": 'Getting Block Couint',
@@ -54,7 +57,7 @@ def get_block_count():
     Gets the count of how many blocks
     :return:
     """
-    monero_getblockcount()
+    monero_getblockcount.main()
 
     return jsonify({
         "wallet_status": 'Getting Block Couint',
@@ -63,10 +66,11 @@ def get_block_count():
 @app.route('/createaccount', methods=['GET'])
 def create_accounts():
     """
-    Gets the count of how many blocks
+    Creates accounts for users
     :return:
     """
-    monero_createaccount()
+    monero_createaccount.main()
+    
     return jsonify({
         "wallet_status": 'Getting Block Couint',
     })
@@ -75,11 +79,11 @@ def create_accounts():
 @app.route('/send', methods=['GET'])
 def send_coin():
     """
-    This will activiate the script to send coin
+    send coin offsite
     :return:
     """
     
-    monero_sendcoin()
+    monero_sendcoin.main()
     
     return jsonify({
         "status": 'sent coin',
@@ -88,10 +92,10 @@ def send_coin():
 @app.route('/recieve', methods=['GET'])
 def recieve_coin():
     """
-     This will activiate the script to check for incomming bitcoin
+     check for incomming coin
     :return:
     """
-    monero_checkincomming()
+    monero_checkincomming.find_new_deposits(blockbacklog=100)
     
     return jsonify({
         "status": 'sent coin',
@@ -106,7 +110,7 @@ def check_accounts():
     :return:
     """
     
-    monero_full_accounts()
+    monero_full_accounts.main()
     
     return jsonify({
         "status": 'Checked Accounts',
