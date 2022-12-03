@@ -9,7 +9,8 @@ from app.classes.auth import Auth_User
 from app.classes.wallet_xmr import Xmr_WalletWork, Xmr_Wallet
 
 ###
-# This script is a faster and simpler version of monero_full_accounts
+# This script is a faster and simpler version
+# of monero_full_accounts
 # Used 90% of the time
 ###
 # standard json header
