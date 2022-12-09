@@ -3,8 +3,8 @@ import requests
 from requests.auth import HTTPDigestAuth
 import json
 from decimal import Decimal
-from walletconfig import rpcpassword, rpcusername, url
-from app import db
+
+from app import db, rpcpassword, rpcusername, url
 
 from app.scripts.monero_addtotransactions import xmr_add_transaction
 from app.generalfunctions import floating_decimals

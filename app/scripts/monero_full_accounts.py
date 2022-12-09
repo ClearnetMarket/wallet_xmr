@@ -1,9 +1,7 @@
 import requests
 from requests.auth import HTTPDigestAuth
 import json
-from walletconfig import rpcpassword, rpcusername, url
-
-from app import db
+from app import db, rpcpassword, rpcusername, url
 
 from app.classes.auth import Auth_User
 from app.classes.wallet_xmr import Xmr_Wallet, Xmr_Unconfirmed

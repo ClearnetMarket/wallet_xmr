@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 class ApplicationConfig:
     CURRENT_SETTINGS = 'LOCAL'
     # databases info
@@ -12,3 +14,16 @@ class ApplicationConfig:
     SQLALCHEMY_BINDS = {'clearnet': SQLALCHEMY_DATABASE_URI_0}
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+    DIGITAL_CURRENCY = 3
+    # LIVE WALLET
+    MINCONF = str(6)
+
+    MIN_AMOUNT = Decimal(0.00000001)
+    MAX_AMOUNT = Decimal(5)
+
+    RPC_USERNAME = 'rpcusername'
+    RPC_PASSWORD = 'rpcpassword'
+
+    URL = "http://localhost:12388/json_rpc"

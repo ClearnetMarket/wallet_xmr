@@ -1,7 +1,7 @@
 import requests
 from requests.auth import HTTPDigestAuth
 import json
-from walletconfig import rpcpassword, rpcusername, url
+from app import rpcpassword, rpcusername, url
 
 ####
 # This scrit is used for running rpc commands to get info.
