@@ -10,12 +10,10 @@ from flask_login import LoginManager
 
 from config import load_config
 ApplicationConfig = load_config()
+
 app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
 session = sessionmaker()
-
-check_enviroment = ApplicationConfig.CURRENT_SETTINGS
-print(f"starting server with {check_enviroment} settings")
 
 
 
@@ -36,6 +34,7 @@ app.url_map.converters['regex'] = RegexConverter
 app.json_encoder = DecimalEncoder
 
 digital_currency = ApplicationConfig.DIGITAL_CURRENCY
+
 minconf = ApplicationConfig.MINCONF
 minamount = ApplicationConfig.MIN_AMOUNT
 maxamount = ApplicationConfig.MAX_AMOUNT
@@ -44,7 +43,7 @@ rpcpassword = ApplicationConfig.RPC_PASSWORD
 url = ApplicationConfig.URL
 
 
-session.configure(bind=ApplicationConfig.SQLALCHEMY_DATABASE_URI_0)
+session.configure(bind=ApplicationConfig.SQLALCHEMY_DATABASE_URI)
 db = SQLAlchemy(app)
 server_session = Session(app)
 ma = Marshmallow(app)
