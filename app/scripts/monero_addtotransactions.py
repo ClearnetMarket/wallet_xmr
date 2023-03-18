@@ -4,7 +4,7 @@ from app import db
 from app.classes.wallet_xmr import Xmr_Transactions
 
 
-def xmr_add_transaction(category,amount,user_id, txid, block,balance,confirmed,fee, address):
+def xmr_add_transaction(category, amount, user_id, txid, block, balance, confirmed, fee, address):
     """
     # this function adds the transaction recording
     :param category:

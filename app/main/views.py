@@ -1,12 +1,12 @@
 from flask import jsonify
 from app.scripts import\
-monero_checkincomming,\
-monero_createaccount,\
-monero_deletewalletwork,\
-monero_full_accounts,\
-monero_getbalanceaccounts,\
-monero_getblockcount,\
-monero_sendcoin
+    monero_checkincomming,\
+    monero_createaccount,\
+    monero_deletewalletwork,\
+    monero_full_accounts,\
+    monero_getbalanceaccounts,\
+    monero_getblockcount,\
+    monero_sendcoin
 from app import app
 
 # End Models
@@ -86,7 +86,7 @@ def send_coin():
     monero_sendcoin.main()
     
     return jsonify({
-        "status": 'sent coin',
+        "success": 'sent coin',
     })
 
 @app.route('/recieve', methods=['GET'])
@@ -98,10 +98,8 @@ def recieve_coin():
     monero_checkincomming.find_new_deposits(blockbacklog=100)
     
     return jsonify({
-        "status": 'sent coin',
+        "success": 'sent coin',
     })
-
-
 
 @app.route('/checkaccounts', methods=['GET'])
 def check_accounts():
@@ -113,6 +111,6 @@ def check_accounts():
     monero_full_accounts.main()
     
     return jsonify({
-        "status": 'Checked Accounts',
+        "success": 'Checked Accounts',
     })
 

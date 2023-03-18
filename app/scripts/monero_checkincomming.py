@@ -9,7 +9,8 @@ from app import db, rpcpassword, rpcusername, url
 from app.scripts.monero_addtotransactions import xmr_add_transaction
 from app.generalfunctions import floating_decimals
 from app.scripts.monero_helper_functions import get_money
-
+from app.notification import notification
+from app.classes.auth import Auth_User
 from app.classes.wallet_xmr import\
     Xmr_Wallet,\
     Xmr_BlockHeight,\
@@ -29,34 +30,34 @@ def update_block_height(newheight):
     db.session.add(current_blockheight)
 
 
-def get_unconfirmed_db(user_id):
+def get_unconfirmed_db(user):
     """
     Get uses unconfirmed table
-    :param user_id:
+    :param user:
     :return:
     """
     unconfirmedtable = db.session\
         .query(Xmr_Unconfirmed)\
-        .filter_by(user_id=user_id)\
+        .filter_by(user_id=user.id)\
         .first()
     return unconfirmedtable
 
 
-def addtounconfirmed(amount, user_id, txid):
+def addtounconfirmed(amount, user, txid):
     """
     # this function can track multiple incomming unconfirmed amounts
     :param amount:
-    :param user_id:
+    :param user:
     :param txid:
     :return:
     """
-    unconfirmedtable = get_unconfirmed_db(user_id)
+    unconfirmedtable = get_unconfirmed_db(user.id)
 
     decimalamount = floating_decimals(amount, 12)
     if unconfirmedtable is None:
 
         newunconfirmed = Xmr_Unconfirmed(
-            user_id=user_id,
+            user_id=user.id,
             unconfirmed1=0,
             unconfirmed2=0,
             unconfirmed3=0,
@@ -91,15 +92,15 @@ def addtounconfirmed(amount, user_id, txid):
         db.session.add(unconfirmedtable)
 
 
-def removeunconfirmed(user_id, txid):
+def removeunconfirmed(user, txid):
     """
     # this function removes the amount from unconfirmed
-    :param user_id:
+    :param user:
     :param txid:
     :return:
     """
 
-    unconfirmeddelete = get_unconfirmed_db(user_id)
+    unconfirmeddelete = get_unconfirmed_db(user.id)
 
     if unconfirmeddelete.txid1 == txid:
         unconfirmeddelete.txid1 = ''
@@ -127,15 +128,15 @@ def removeunconfirmed(user_id, txid):
     db.session.add(unconfirmeddelete)
 
 
-def getbalanceunconfirmed(user_id):
+def getbalanceunconfirmed(user):
 
     """
     # this function gets amount of unconfirmed
-    :param user_id:
+    :param user:
     :return:
     """
 
-    unconfirmeddelete = get_unconfirmed_db(user_id)
+    unconfirmeddelete = get_unconfirmed_db(user.id)
 
     a = Decimal(unconfirmeddelete.unconfirmed1)
     b = Decimal(unconfirmeddelete.unconfirmed2)
@@ -147,7 +148,7 @@ def getbalanceunconfirmed(user_id):
 
     get_user_wallet = db.session\
         .query(Xmr_Wallet)\
-        .filter_by(user_id=user_id)\
+        .filter_by(user_id=user.id)\
         .first()
     totalchopped = floating_decimals(total, 12)
     get_user_wallet.unconfirmed = totalchopped
@@ -176,7 +177,7 @@ def createorphan(hashid, amount):
         db.session.add(trans)
 
 
-def addtransaction(user_id,
+def addtransaction(user,
                    amount,
                    hashid,
                    new_transaction_blockheight,
@@ -184,7 +185,7 @@ def addtransaction(user_id,
                    ):
     """
     Updates/adds existing transaction
-    :param user_id:
+    :param user:
     :param amount:
     :param hashid:
     :param new_transaction_blockheight:
@@ -202,25 +203,19 @@ def addtransaction(user_id,
 
     getuserswallet = db.session\
         .query(Xmr_Wallet)\
-        .filter(Xmr_Wallet.user_id == user_id)\
+        .filter(Xmr_Wallet.user_id == user.id)\
         .first()
 
     if gettransaction.confirmed == 0:
-        print("transaction exists:", str(hashid))
         howmanyconfirmations = current_block - new_transaction_blockheight
-        print("confirmatins: ", howmanyconfirmations)
-        print(current_block)
-        print(new_transaction_blockheight)
         if howmanyconfirmations <= 11:
-            print("unconfirmed")
+
             # add amount to current balance
             gettransaction.confirmations = howmanyconfirmations
             db.session.add(gettransaction)
-
             # updating incomming amount incase multiple transactions
         else:
-            print("Confirmed")
-            removeunconfirmed(user_id=getuserswallet.user_id,
+            removeunconfirmed(user=user,
                               txid=hashid)
 
             currentbalance = getuserswallet.currentbalance
@@ -243,14 +238,14 @@ def addtransaction(user_id,
             db.session.commit()
 
 
-def createnewtransaction(user_id,
+def createnewtransaction(user,
                          amount,
                          hashid,
                          new_transaction_blockheight,
                          old_blockheight):
     """
     Found new transaction .creates it in db
-    :param user_id:
+    :param user:
     :param amount:
     :param hashid:
     :param old_blockheight:
@@ -260,13 +255,13 @@ def createnewtransaction(user_id,
     print("Found new transaction:", str(hashid))
     getuserswallet = db.session\
         .query(Xmr_Wallet)\
-        .filter(Xmr_Wallet.user_id == user_id)\
+        .filter(Xmr_Wallet.user_id == user.id)\
         .first()
 
     # add to transactions
     xmr_add_transaction(category=3,
                           amount=amount,
-                          user_id=getuserswallet.user_id,
+                          user_id=user.id,
                           txid=hashid,
                           block=new_transaction_blockheight,
                           balance=getuserswallet.currentbalance,
@@ -277,10 +272,12 @@ def createnewtransaction(user_id,
 
     # add total of incomming
     addtounconfirmed(amount=amount,
-                     user_id=getuserswallet.user_id,
+                     user=user,
                      txid=hashid
                      )
-
+    notification(username=user.display_name,
+                 user_uuid=user.uuid,
+                 msg="New XMR despot has been added to your wallet.")
     if int(old_blockheight) < int(new_transaction_blockheight):
         update_block_height(newheight=new_transaction_blockheight)
 
@@ -351,7 +348,11 @@ def find_new_deposits(blockbacklog):
 
             else:
                 user_id = getuserswallet.user_id
-                print("USER:", getuserswallet.user_id)
+                user = db.session\
+                    .query(Auth_User)\
+                    .filter(Auth_User.id==user_id)\
+                    .first()
+                print("USER:", user.display_name)
                 # see if already in db
                 gettransaction = db.session\
                     .query(Xmr_Transactions)\
@@ -361,7 +362,7 @@ def find_new_deposits(blockbacklog):
                 if gettransaction:
 
                     # update transaction
-                    addtransaction(user_id,
+                    addtransaction(user,
                                    amount,
                                    hashid,
                                    new_transaction_blockheight,
@@ -369,14 +370,14 @@ def find_new_deposits(blockbacklog):
                                    )
                 else:
                     # create a new transaction
-                    createnewtransaction(user_id,
+                    createnewtransaction(user,
                                          amount,
                                          hashid,
                                          new_transaction_blockheight,
                                          current_block)
 
                 # get user unconfirmed balance
-                getbalanceunconfirmed(user_id)
+                getbalanceunconfirmed(user)
 
         db.session.commit()
 

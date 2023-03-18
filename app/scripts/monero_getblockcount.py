@@ -7,7 +7,7 @@ from app.classes.wallet_xmr import Xmr_BlockHeight
 
 
 ###
-# This script updates blocks so you know what to define confirmations as
+# This script updates blocks in order to define confirmations as human readable
 ##
 
 def getblockheight():

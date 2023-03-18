@@ -1,8 +1,6 @@
-from flask import jsonify, Response
+from flask import jsonify
 from app.info import info
 
-
-# End Models
 
 
 @info.route('/status', methods=['GET'])

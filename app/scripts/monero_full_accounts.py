@@ -2,7 +2,6 @@ import requests
 from requests.auth import HTTPDigestAuth
 import json
 from app import db, rpcpassword, rpcusername, url
-
 from app.classes.auth import Auth_User
 from app.classes.wallet_xmr import Xmr_Wallet, Xmr_Unconfirmed
 
@@ -143,7 +142,7 @@ def main():
                     print("account major index:", theaddresresponse["result"]['index']["major"])
                     print("account minor index:", theaddresresponse["result"]['index']["minor"])
                     print(user_wallet.address1)
-                    pass
+
                 else:
                     print("Adding new address for user")
                     print(f.user_name)

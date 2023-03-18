@@ -13,21 +13,22 @@ from app.classes.wallet_xmr import\
     Xmr_WalletWork,\
     Xmr_BlockHeight, \
     Xmr_Wallet
-
+from app.classes.auth import Auth_User
+from app.notification import notification
 
 # standard json header
 headers = {'content-type': 'application/json'}
 
 
-def getwalletofperson(userid):
+def getwalletofperson(user):
     """
     GEts a users wallet by id
-    :param userid:
+    :param user:
     :return: sql query of user row
     """
     getuserswallet = db.session\
         .query(Xmr_Wallet) \
-        .filter(Xmr_Wallet.user_id == userid) \
+        .filter(Xmr_Wallet.user_id == user.id) \
         .first()
     return getuserswallet
 
@@ -36,7 +37,7 @@ def getblockheight():
     """
     Gets value from database of last block height
     Used to perform calculations of wallet transactions
-    :return: returns an sql row
+    :return: returns sql row
     """
     lastblockheight = db.session\
         .query(Xmr_BlockHeight)\
@@ -58,7 +59,7 @@ def add_error(f, response_json):
         db.session.add(f)
 
 
-def sendcoin(sendto, amount):
+def sendcoin(user, sendto, amount):
     """
     This will send the coin.
     If it fails turn the work to 105 for error
@@ -87,7 +88,7 @@ def sendcoin(sendto, amount):
         "method": "transfer",
         "params": {"destinations": recipents,
                    "mixin": mixin,
-                   "account_index": 2
+                   "account_index": 1
                    }
     }
 
@@ -104,14 +105,17 @@ def sendcoin(sendto, amount):
     # pretty print json output
     response_json = response.json()
     print(json.dumps(response_json, indent=4))
-
+    notification(username=user.display_name,
+                 user_uuid=user.uuid,
+                 msg="XMR withdrawl has been sent from the wallet")
     return response_json
 
 
-def add_transaction(f, sendto, amount, user_id):
+def add_transaction(f, sendto, amount, user):
 
-    userswallet = getwalletofperson(userid=user_id)
-    response_json_send = sendcoin(sendto=sendto,
+    userswallet = getwalletofperson(user=user)
+    response_json_send = sendcoin(user=user,
+                                sendto=sendto,
                                   amount=amount,
                                   )
     # see if successful
@@ -126,7 +130,7 @@ def add_transaction(f, sendto, amount, user_id):
 
             xmr_add_transaction(category=2,
                                   amount=amount,
-                                  user_id=f.user_id,
+                                  user_id=user.id,
                                   txid=thetxid,
                                   block=theblockheight.blockheight,
                                   balance=userswallet.currentbalance,
@@ -141,8 +145,6 @@ def add_transaction(f, sendto, amount, user_id):
             print("sent coin work completed")
 
     elif response_json_send["result"]['error']:
-        print("error!")
-        print(response_json_send)
         add_error(f, response_json_send)
 
         newbalance = userswallet.currentbalance + amount
@@ -172,10 +174,14 @@ def main():
         print("No outgoing transactions")
     else:
         for f in work:
+            user = db.session\
+                .query(Auth_User)\
+                .filter(Auth_User.id==f.user_id)\
+                .first()
             add_transaction(f,
                             sendto=f.sendto,
                             amount=f.amount,
-                            user_id=f.user_id
+                            user=user
                             )
         db.session.commit()
 
