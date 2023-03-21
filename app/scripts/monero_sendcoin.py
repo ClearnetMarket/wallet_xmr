@@ -14,7 +14,7 @@ from app.classes.wallet_xmr import\
     Xmr_BlockHeight, \
     Xmr_Wallet
 from app.classes.auth import Auth_User
-from app.notification import notification
+from app.common.notification import create_notification
 
 # standard json header
 headers = {'content-type': 'application/json'}
@@ -105,7 +105,7 @@ def sendcoin(user, sendto, amount):
     # pretty print json output
     response_json = response.json()
     print(json.dumps(response_json, indent=4))
-    notification(username=user.display_name,
+    create_notification(username=user.display_name,
                  user_uuid=user.uuid,
                  msg="XMR withdrawl has been sent from the wallet")
     return response_json

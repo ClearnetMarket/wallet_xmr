@@ -7,9 +7,9 @@ from decimal import Decimal
 from app import db, rpcpassword, rpcusername, url
 
 from app.scripts.monero_addtotransactions import xmr_add_transaction
-from app.generalfunctions import floating_decimals
+from app.common.generalfunctions import floating_decimals
 from app.scripts.monero_helper_functions import get_money
-from app.notification import notification
+from app.common.notification import create_notification
 from app.classes.auth import Auth_User
 from app.classes.wallet_xmr import\
     Xmr_Wallet,\
@@ -275,7 +275,7 @@ def createnewtransaction(user,
                      user=user,
                      txid=hashid
                      )
-    notification(username=user.display_name,
+    create_notification(username=user.display_name,
                  user_uuid=user.uuid,
                  msg="New XMR despot has been added to your wallet.")
     if int(old_blockheight) < int(new_transaction_blockheight):
